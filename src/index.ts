@@ -98,4 +98,3 @@ export { IEmailLocals } from './Interfaces/email.interface';
 export { DatabaseFactory } from './Connection/DatabaseFactory';
 export { CloudinaryService } from './Services/CloudinaryService';
 export { BaseRepository } from './Repositories/BaseRepository';
-export {BaseDTO} from './DTO/BaseDTO';
