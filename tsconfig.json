@@ -10,17 +10,17 @@
     "module": "esnext",
     "moduleResolution": "node",
     "noEmitOnError": true,
-    "outDir": "./build",
-    "rootDir": "./src",
+    "outDir": "build",
+    "rootDir": "src",
     "sourceMap": true,
     "strict": true,
-    "target": "ES2021",
+    "target": "ES2023",
     "emitDecoratorMetadata": true,
     "forceConsistentCasingInFileNames": true,
     "pretty": true,
     "resolveJsonModule": true,
     "allowJs": true
   },
-  "include": ["./src/**/*"],
-  "exclude": ["./node_modules"]
+  "include": ["./src/"],
+  "exclude": ["node_modules"]
 }
