@@ -84,7 +84,7 @@ export {
   FileToLarge,
 } from './Error/ErrorHandler';
 
-import { winstonLogger } from './Interfaces/logger';
+export { winstonLogger } from './Interfaces/logger';
 export {
   isDataURL,
   isEmail,
