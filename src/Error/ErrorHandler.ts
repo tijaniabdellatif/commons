@@ -72,8 +72,8 @@ export class BadRequestError extends ErrorHandler {
   }
   
   export class ServerError extends ErrorHandler {
-    statusCode = StatusCodes.SERVICE_UNAVAILABLE;
-    status = 'error';
+    statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
+    status = 'server Error';
   
     constructor(message: string, comingFrom: string) {
       super(message, comingFrom);
