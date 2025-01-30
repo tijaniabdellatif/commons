@@ -102,3 +102,5 @@ export { ConfigSchema, ConfigService } from './Config/ConfigService';
 export { PrettyConsole } from './Console/PrettyConsole';
 export { AbstractRouteHandler } from './Routers/AbstractRouteHandler';
 export { RouterInitializer } from './Routers/RouterInitializer';
+export { ElasticSearchFactory } from './Elastic/ElasticSearchFactory';
+export { ElasticSearchConfig } from './Elastic/ElasticInterface';
