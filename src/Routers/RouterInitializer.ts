@@ -1,8 +1,5 @@
 import {
   Application,
-  Request,
-  Response,
-  NextFunction,
   RequestHandler,
 } from 'express';
 import { RouteInterface } from './RouteInterface';
