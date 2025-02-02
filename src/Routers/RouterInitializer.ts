@@ -1,50 +1,42 @@
-import {
-  Application,
-  RequestHandler,
-} from 'express';
-import { RouteInterface } from './RouteInterface';
+import { Application, RequestHandler } from 'express';
+import { ControllerInterface } from './RouteInterface';
+import { Router } from './Router';
 
 export class RouterInitializer {
-  protected handlers: RouteInterface[];
-  private middlewareMap: Record<string, RequestHandler[]>;
+  private controllers: ControllerInterface[];
+  private globalMiddlewares: RequestHandler[];
 
   constructor(
-    handlers: RouteInterface[] = [],
-    middlewareMap: Record<string, RequestHandler[]> = {}
+    controllers: ControllerInterface[],
+    globalMiddlewares: RequestHandler[] = []
   ) {
-    if (handlers.length === 0) {
-      throw new Error('No route handlers provided');
+    if (controllers.length === 0) {
+      throw new Error('No controllers provided');
     }
 
-    this.handlers = handlers;
-    this.middlewareMap = middlewareMap;
+    this.controllers = controllers;
+    this.globalMiddlewares = globalMiddlewares;
   }
 
-  public initialize(
-    app: Application,
-  ): void {
-    // Apply middlewares before setting up routes
-    this.chainHandlers().handle(app);
-    this.applyMiddlewares(app);
+  public initialize(app: Application): void {
+    this.applyGlobalMiddlewares(app);
+    this.controllers.forEach((controller) => {
+      controller.routes.forEach((route) => {
+        const routeHandler = new Router(
+          route.path,
+          route.method,
+          route.handler,
+          route.middlewares
+        );
 
-    // Chain and handle routes
-   
-  }
-
-  private chainHandlers(): RouteInterface {
-    this.handlers.reduce((prev, current) => prev.setNext(current));
-    return this.handlers[0];
-  }
-
-  private applyMiddlewares(
-    app: Application,
-  ): void {
-    Object.entries(this.middlewareMap).forEach(([path, middlewares]) => {
-      app.use(path, ...middlewares);
+        routeHandler.handle(app);
+      });
     });
   }
 
-  public getHandlers(): RouteInterface[] {
-    return this.handlers;
+  private applyGlobalMiddlewares(app: Application): void {
+    this.globalMiddlewares.forEach((middleware) => {
+      app.use(middleware);
+    });
   }
 }
