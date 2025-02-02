@@ -37,7 +37,7 @@ export abstract class ErrorHandler extends Error {
 
 export class BadRequestError extends ErrorHandler {
     statusCode = StatusCodes.BAD_REQUEST;
-    status = 'error';
+    status = 'BAD REQUEST';
   
     constructor(message: string, comingFrom: string) {
       super(message, comingFrom);
@@ -46,7 +46,7 @@ export class BadRequestError extends ErrorHandler {
   
   export class NotFound extends ErrorHandler {
     statusCode = StatusCodes.NOT_FOUND;
-    status = 'error';
+    status = 'NOT FOUND';
   
     constructor(message: string, comingFrom: string) {
       super(message, comingFrom);
@@ -55,7 +55,7 @@ export class BadRequestError extends ErrorHandler {
   
   export class NotAuthorized extends ErrorHandler {
     statusCode = StatusCodes.UNAUTHORIZED;
-    status = 'error';
+    status = 'NOT AUTHORIZED';
   
     constructor(message: string, comingFrom: string) {
       super(message, comingFrom);
@@ -64,7 +64,7 @@ export class BadRequestError extends ErrorHandler {
   
   export class FileToLarge extends ErrorHandler {
     statusCode = StatusCodes.REQUEST_TOO_LONG;
-    status = 'error';
+    status = 'File TO LARGE';
   
     constructor(message: string, comingFrom: string) {
       super(message, comingFrom);
@@ -73,7 +73,7 @@ export class BadRequestError extends ErrorHandler {
   
   export class ServerError extends ErrorHandler {
     statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
-    status = 'server Error';
+    status = 'INTERNAL SERVER ERROR';
   
     constructor(message: string, comingFrom: string) {
       super(message, comingFrom);

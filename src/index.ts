@@ -105,3 +105,4 @@ export { ElasticSearchFactory } from './Elastic/ElasticSearchFactory';
 export { ElasticSearchConfig } from './Elastic/ElasticInterface';
 export { ControllerInterface, RouteInterface } from './Routers/RouteInterface';
 export { Router as ConcreteRouter } from './Routers/Router';
+export { IApiStrategy } from './Services/http/IApiStrategy';
