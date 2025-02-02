@@ -26,26 +26,34 @@ export class ElasticSearch {
     );
   }
 
-  public async checkConnection(): Promise<void> {
-    for (let retryCount = 0; retryCount < this.maxRetries; retryCount++) {
-      this.log.info(`${this.config.serviceName} connecting to ElasticSearch. Attempt ${retryCount + 1}`);
+  public async checkConnection(maxRestarts: number = Infinity): Promise<void> {
+    let restartCount = 0;
   
-      try {
-        const health = await this.elasticClient.cluster.health({});
-        this.log.info(`${this.config.serviceName} Elastic Search health status - ${health.status} ${health.cluster_name}`);
-        return; // Connection successful, exit the method
-      } catch (error) {
-        this.log.error(`Connection to Elasticsearch failed. Retrying in ${this.retryDelay}ms...`);
+    while (restartCount < maxRestarts) {
+      for (let retryCount = 0; retryCount < this.maxRetries; retryCount++) {
+        this.log.info(`${this.config.serviceName} connecting to ElasticSearch. Attempt ${retryCount + 1}`);
   
-        if (retryCount < this.maxRetries - 1) {
-          await this.sleep(this.retryDelay);
-          this.retryDelay *= 2;
-        } else {
-          this.log.error('Max retries reached. Giving up.');
-          throw new Error('Failed to connect to Elasticsearch after maximum retries.');
+        try {
+          const health = await this.elasticClient.cluster.health({});
+          this.log.info(`${this.config.serviceName} Elastic Search health status - ${health.status} ${health.cluster_name}`);
+          return; // Connection successful, exit the method
+        } catch (error) {
+          this.log.error(`Connection to Elasticsearch failed. Retrying in ${this.retryDelay}ms...`);
+  
+          if (retryCount < this.maxRetries - 1) {
+            await this.sleep(this.retryDelay);
+            this.retryDelay *= 2; // Exponential backoff
+          } else {
+            this.log.error('Max retries reached. Restarting connection process...');
+            this.retryDelay = this.config.retryDelay || 1000; // Reset retry delay
+            restartCount++;
+            break; // Exit the inner loop to restart the process
+          }
         }
       }
     }
+  
+    throw new Error('Failed to connect to Elasticsearch after maximum restarts.');
   }
 
   public getClient(): Client {
