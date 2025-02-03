@@ -1,3 +1,5 @@
+
+
 export {
   IAuthPayload,
   IAuth,
@@ -106,3 +108,4 @@ export { ElasticSearchConfig } from './Elastic/ElasticInterface';
 export { ControllerInterface, RouteInterface } from './Routers/RouteInterface';
 export { Router as ConcreteRouter } from './Routers/Router';
 export { IApiStrategy } from './Services/http/IApiStrategy';
+export { BasicApiStrategy } from './Services/http/BasicApiStrategy';
