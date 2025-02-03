@@ -2,7 +2,7 @@ import { ServerError } from '../Error/ErrorHandler';
 import { IApiStrategy } from './http/IApiStrategy';
 import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
-class AxiosService {
+export class AxiosService {
   private static instance: AxiosService;
   private strategy?: IApiStrategy;
   private axiosInstance?: AxiosInstance;
@@ -54,7 +54,3 @@ class AxiosService {
     return response.data;
   }
 }
-
-
-
-export const ApiService = AxiosService.getInstance();
