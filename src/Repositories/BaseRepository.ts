@@ -3,9 +3,14 @@ import {
   EntityManager,
   DeepPartial,
   FindManyOptions,
+  FindOptionsWhere,
 } from 'typeorm';
 import { validateOrReject } from 'class-validator';
-import { ErrorHandler, IError, ServerError, ValidationProccessError } from '../Error/ErrorHandler';
+import {
+  IError,
+  ServerError,
+  ValidationProccessError,
+} from '../Error/ErrorHandler';
 export class BaseRepository<T extends Object> {
   constructor(
     private repository: Repository<T>,
@@ -58,6 +63,26 @@ export class BaseRepository<T extends Object> {
     await this.repository.delete(id);
   }
 
+  async findWithPagination(
+    page: number = 1,
+    limit: number = 10,
+    filters?: FindOptionsWhere<T>
+  ): Promise<{ data: T[]; total: number; page: number; limit: number }> {
+    const options: FindManyOptions<T> = {
+      where: filters || {},
+      skip: (page - 1) * limit,
+      take: limit,
+    };
+
+    const [data, total] = await this.repository.findAndCount(options);
+    return {
+      data,
+      total,
+      page,
+      limit,
+    };
+  }
+
   async transaction(
     runInTransaction: (manager: EntityManager) => Promise<any>
   ): Promise<void> {
@@ -65,7 +90,10 @@ export class BaseRepository<T extends Object> {
       try {
         await runInTransaction(transactionManager);
       } catch (error: any | IError) {
-        throw new ServerError(`Transaction failed ${error.message}`,`transaction method ()`)
+        throw new ServerError(
+          `Transaction failed ${error.message}`,
+          `transaction method ()`
+        );
       }
     });
   }
