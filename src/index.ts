@@ -1,5 +1,3 @@
-
-
 export {
   IAuthPayload,
   IAuth,
@@ -109,3 +107,4 @@ export { ControllerInterface, RouteInterface } from './Routers/RouteInterface';
 export { Router as ConcreteRouter } from './Routers/Router';
 export { IApiStrategy } from './Services/http/IApiStrategy';
 export { BasicApiStrategy } from './Services/http/BasicApiStrategy';
+export { ApiService } from './Services/AxiosService';
