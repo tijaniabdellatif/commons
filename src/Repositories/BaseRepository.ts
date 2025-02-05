@@ -4,7 +4,10 @@ import {
   DeepPartial,
   FindManyOptions,
   FindOptionsWhere,
+  Like,
+  FindOptionsOrder
 } from 'typeorm';
+import { EventEmitter } from 'events';
 import { validateOrReject } from 'class-validator';
 import {
   IError,
@@ -12,10 +15,17 @@ import {
   ValidationProccessError,
 } from '../Error/ErrorHandler';
 export class BaseRepository<T extends Object> {
+  private eventEmitter: EventEmitter;
   constructor(
     private repository: Repository<T>,
     private manager: EntityManager
-  ) {}
+  ) {
+    this.eventEmitter = new EventEmitter();
+  }
+
+  private emitEvent(event: string, data: T) {
+    this.eventEmitter.emit(event, data);
+  }
 
   async findAll(options?: FindManyOptions<T>): Promise<T[]> {
     return await this.repository.find(options);
@@ -48,30 +58,49 @@ export class BaseRepository<T extends Object> {
       await this.validateDTO(data, DTOClass);
     }
     const entity = this.repository.create(data as DeepPartial<T>);
-    return await this.repository.save(entity);
+    const saved = await this.repository.save(entity);
+
+    this.emitEvent(`${this.repository.metadata.name}.created`, saved);
+    return saved;
   }
 
   async save(entity: T): Promise<T> {
-    return await this.repository.save(entity);
+    const saved = await this.repository.save(entity);
+    this.emitEvent(`${this.repository.metadata.name}.updated`, saved);
+    return saved;
   }
 
   async Softdelete(id: number): Promise<void> {
     await this.repository.softDelete(id);
+    this.emitEvent(`${this.repository.metadata.name}.softDeleted`, {
+      id,
+    } as any);
   }
 
   async delete(id: number): Promise<void> {
     await this.repository.delete(id);
+    this.emitEvent(`${this.repository.metadata.name}.deleted`, { id } as any);
   }
 
   async findWithPagination(
     page: number = 1,
     limit: number = 10,
-    filters?: FindOptionsWhere<T>
+    filters?: FindOptionsWhere<T>,
+    searchField?: keyof T,
+    searchQuery?: string,
+    sortField?: keyof T,
+    sortOrder: 'ASC' | 'DESC' = 'ASC'
   ): Promise<{ data: T[]; total: number; page: number; limit: number }> {
+    const whereClause = filters || {};
+    if (searchField && searchQuery) {
+      (whereClause as any)[searchField] = Like(`%${searchQuery}%`);
+    }
+
     const options: FindManyOptions<T> = {
       where: filters || {},
       skip: (page - 1) * limit,
       take: limit,
+      order: sortField ? ({ [sortField]: sortOrder} as FindOptionsOrder<T>) : undefined,
     };
 
     const [data, total] = await this.repository.findAndCount(options);
@@ -96,5 +125,9 @@ export class BaseRepository<T extends Object> {
         );
       }
     });
+  }
+
+  on(event: string, listner: (data: any) => void) {
+    this.eventEmitter.on(event, listner);
   }
 }
