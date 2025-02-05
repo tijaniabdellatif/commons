@@ -5,7 +5,7 @@ import {
   FindManyOptions,
   FindOptionsWhere,
   Like,
-  FindOptionsOrder
+  FindOptionsOrder,
 } from 'typeorm';
 import { EventEmitter } from 'events';
 import { validateOrReject } from 'class-validator';
@@ -100,7 +100,9 @@ export class BaseRepository<T extends Object> {
       where: filters || {},
       skip: (page - 1) * limit,
       take: limit,
-      order: sortField ? ({ [sortField]: sortOrder} as FindOptionsOrder<T>) : undefined,
+      order: sortField
+        ? ({ [sortField]: sortOrder } as FindOptionsOrder<T>)
+        : undefined,
     };
 
     const [data, total] = await this.repository.findAndCount(options);
@@ -129,5 +131,9 @@ export class BaseRepository<T extends Object> {
 
   on(event: string, listner: (data: any) => void) {
     this.eventEmitter.on(event, listner);
+  }
+
+  protected getRepository(): Repository<T> {
+    return this.repository;
   }
 }
