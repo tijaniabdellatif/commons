@@ -18,16 +18,20 @@ export class DatabaseFactory {
     options: DataSourceOptions,
     esUrl: string
   ): Promise<DataSource> {
+    console.log(`[DatabaseFactory] Checking connection for "${name}"...`);
     if (this.connection.has(name)) {
+      console.log(`[DatabaseFactory] Connection "${name}" already exists.`);
       const exists = this.connection.get(name)!;
 
       if (!exists.isInitialized) {
+      
         await exists.initialize();
       }
 
       return exists;
     }
 
+    console.log(`[DatabaseFactory] Creating new connection "${name}"...`);
     const logger = createLogger(esUrl, name);
     this.loggers.set(name, logger);
 
@@ -35,6 +39,7 @@ export class DatabaseFactory {
       const dataSource = new DataSource(options);
       await dataSource.initialize();
       this.connection.set(name, dataSource);
+      console.log(`[DatabaseFactory] Connection "${name}" successfully stored.`);
       logger.info(
         `[DatabaseFactory] connection ${name} established (${options.type})`
       );
