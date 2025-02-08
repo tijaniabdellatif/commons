@@ -108,5 +108,5 @@ export { Router as ConcreteRouter } from './Routers/Router';
 export { IApiStrategy } from './Services/http/IApiStrategy';
 export { BasicApiStrategy } from './Services/http/BasicApiStrategy';
 export { AxiosService } from './Services/AxiosService';
-import { QueueConnection } from './Queues/QueueConnection';
-import { createQueueConnection } from './Queues/createConnection';
+export { QueueConnection } from './Queues/QueueConnection';
+export { createQueueConnection } from './Queues/createConnection';
