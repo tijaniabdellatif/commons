@@ -1,4 +1,4 @@
-import { Application, RequestHandler } from 'express';
+import {  RequestHandler } from 'express';
 import { HTTPMethods } from '../types/types';
 
 export interface RouteInterface {
@@ -11,6 +11,5 @@ export interface RouteInterface {
 }
 
 export interface ControllerInterface {
-
   routes: RouteInterface[];
 }
